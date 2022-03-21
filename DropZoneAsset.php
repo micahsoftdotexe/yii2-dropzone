@@ -1,5 +1,5 @@
 <?php
-namespace micahsoft\dropzone;
+namespace micahsoftdotexe\dropzone;
 
 use yii\web\AssetBundle;
 

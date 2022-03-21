@@ -1,12 +1,12 @@
 <?php
 
-namespace micahsoft\dropzone;
+namespace micahsoftdotexe\dropzone;
 
 use Yii;
 use yii\base\Widget;
 use yii\helpers\Html;
 use yii\helpers\Json;
-use app\components\DropZoneAsset;
+use micahsoftdotexe\dropzone\DropZoneAsset;
 
 class DropZone extends Widget
 {
@@ -23,7 +23,6 @@ class DropZone extends Widget
     {
         parent::init();
         DropZoneAsset::register($this->getView());
-
     }
 
     protected function hasModel()
