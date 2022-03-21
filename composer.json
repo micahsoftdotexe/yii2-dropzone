@@ -1,0 +1,22 @@
+
+{
+    "name": "micahsoftdotexe/yii2-dropzone",
+    "description": "Yii2 Dropzone Extention",
+    "type": "yii2-extension",
+    "keywords": ["yii2","extension","dropzonejs","dropzone"],
+    "license": "Apache-2.0",
+    "authors": [
+        {
+            "name": "micahsoftdotexe"
+        }
+    ],
+    "require": {
+        "yiisoft/yii2": "2.0.*",
+        "enyo/dropzone": "^5.9"
+    },
+    "autoload": {
+        "psr-4": {
+            "micahsoftdotexe\\dropzone\\": ""
+        }
+    }
+}
