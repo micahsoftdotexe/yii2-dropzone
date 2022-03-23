@@ -25,19 +25,19 @@ class DropZone extends Widget
         DropZoneAsset::register($this->getView());
     }
 
-    protected function hasModel()
+    protected function hasUrl()
     {
-        return $this->model instanceof \yii\base\Model
-        && $this->url !== null;
+        return $this->url !== null;
     }
 
     public function run()
     {
-        if (!$this->hasModel()) {
-            throw new \yii\base\InvalidConfigException('DropZone::$model and DropZone::$url must be set.');
+        if (!$this->hasUrl()) {
+            throw new \yii\base\InvalidConfigException('DropZone::$url must be set.');
         }
         $this->id = $this->id ?: 'dropzone'.bin2hex(random_bytes(3));
         $this->url = $this->url?:Yii::$app->request->baseUrl.'/dropzone/upload';
+        //Cannot let the dropzone variable be the id because id can have dashes and other weird characters
         $this->dropzoneVariable = 'dropzone'.bin2hex(random_bytes(3));
         $this->renderWidgetHtml();
         $this->renderWidgetJavascript();
@@ -45,7 +45,7 @@ class DropZone extends Widget
 
     private function renderWidgetHtml()
     {
-        echo Html::beginForm($this->url, 'post', array_merge(['id' => $this->id, 'class' => 'dropzone', 'enctype' => 'multipart/form-data'], $this->htmlOptions));
+        echo Html::beginForm($this->url, 'post', array_merge(['id' => $this->id, 'enctype' => 'multipart/form-data'], $this->htmlOptions));
         echo Html::tag('div', Html::tag('span', $this->message), ['id' => $this->id.'-message', 'class' => 'dz-message'] );
         echo Html::endForm();
     }
@@ -53,7 +53,11 @@ class DropZone extends Widget
     private function renderWidgetJavascript()
     {
         $view = $this->getView();
-        $js = 'Dropzone.autoDiscover = ' . (($this->autoDiscover) ? "true" : "false") . '; var ' . $this->dropzoneVariable . ' = new Dropzone("#' . $this->id . '", ' . Json::encode($this->options). ');';
+        $js = 'Dropzone.autoDiscover = ' . (($this->autoDiscover) ? "true" : "false") . ';';
+        //! The following line is important, it assigns the css class after autoDiscover is set
+        $js .= '$("#'.$this->id.'").addClass("dropzone");';
+        $js.= 'let ' . $this->dropzoneVariable . ' = new Dropzone("#' . $this->id . '", ' . Json::encode($this->options). ');';
+        //$js.= 'let dropzoneControl = $(this)[0].dropzone; console.log("Out here"); if (dropzoneControl) {    console.log("Here"); dropzoneControl.destroy();}';
         foreach ($this->events as $event => $function) {
             $js .= $this->dropzoneVariable . '.on("' . $event . '", ' . new \yii\web\JsExpression($function) . ');';
         }
