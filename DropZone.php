@@ -57,7 +57,6 @@ class DropZone extends Widget
         //! The following line is important, it assigns the css class after autoDiscover is set
         $js .= '$("#'.$this->id.'").addClass("dropzone");';
         $js.= 'let ' . $this->dropzoneVariable . ' = new Dropzone("#' . $this->id . '", ' . Json::encode($this->options). ');';
-        //$js.= 'let dropzoneControl = $(this)[0].dropzone; console.log("Out here"); if (dropzoneControl) {    console.log("Here"); dropzoneControl.destroy();}';
         foreach ($this->events as $event => $function) {
             $js .= $this->dropzoneVariable . '.on("' . $event . '", ' . new \yii\web\JsExpression($function) . ');';
         }
