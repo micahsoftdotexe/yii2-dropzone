@@ -27,7 +27,7 @@ class DropZone extends Widget
 
     protected function hasUrl()
     {
-        return $this->url !== null;
+        return ($this->url !== null);
     }
 
     public function run()
@@ -35,10 +35,19 @@ class DropZone extends Widget
         if (!$this->hasUrl()) {
             throw new \yii\base\InvalidConfigException('DropZone::$url must be set.');
         }
+        if ($id) {
+            $this->id = $id;
+        }
         $this->id = $this->id ?: 'dropzone'.bin2hex(random_bytes(3));
+        if ($url) {
+            $this->url = $url;
+        }
+        if (!$this->hasUrl()) {
+            throw new \yii\base\InvalidConfigException('DropZone::$url must be set.');
+        }
         $this->url = $this->url?:Yii::$app->request->baseUrl.'/dropzone/upload';
         //Cannot let the dropzone variable be the id because id can have dashes and other weird characters
-        $this->dropzoneVariable = 'dropzone'.bin2hex(random_bytes(3));
+        $this->dropzoneVariable = \yii\helpers\Inflector::variablize($this->id);
         $this->renderWidgetHtml();
         $this->renderWidgetJavascript();
     }
@@ -55,8 +64,10 @@ class DropZone extends Widget
         $view = $this->getView();
         $js = 'Dropzone.autoDiscover = ' . (($this->autoDiscover) ? "true" : "false") . ';';
         //! The following line is important, it assigns the css class after autoDiscover is set
-        $js .= '$("#'.$this->id.'").addClass("dropzone");';
-        $js.= 'let ' . $this->dropzoneVariable . ' = new Dropzone("#' . $this->id . '", ' . Json::encode($this->options). ');';
+
+        $js .= '$("#' . $this->id . '").addClass("dropzone");';
+        $js .= 'let ' . $this->dropzoneVariable . ' = new Dropzone("#' . $this->id . '", ' . Json::encode($this->options) . ');';
+
         foreach ($this->events as $event => $function) {
             $js .= $this->dropzoneVariable . '.on("' . $event . '", ' . new \yii\web\JsExpression($function) . ');';
         }
